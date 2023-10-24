@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jslhrd.exboard.mapper.BoardMapper">
+	<!-- 총 게시글 카운트 -->
+	<select id="boardCount">
+		select count(*) from tbl_board
+	</select>
+	
+	<!-- 전체 게시글(페이지x, 검색x) 
+	<select id="boardList" resultType="com.jslhrd.exboard.domain.BoardDTO">
+		select * from tbl_board order by idx desc
+	</select> -->	
+	
+	<!-- 전체 게시글(페이지o, 검색x)  -->
+	<select id="boardList" resultType="com.jslhrd.exboard.domain.BoardDTO">
+		<![CDATA[
+			select X.* from (select rownum as rnum, A.* from 
+				(select * from tbl_board order by idx desc) A
+						where rownum <= #{endpage}) X 
+								where X.rnum >= #{startpage}
+		]]>
+	</select>
+	<!-- 게시글 등록 -->
+	<insert id="boardWrite">
+		insert into tbl_board(idx, name, subject, contents, pass) values(tbl_board_seq_idx.nextval, #{name}, #{subject}, #{contents}, #{pass})
+	</insert>
+	<!-- 게시글 조회수 증가 -->
+	<update id="boardHits" >
+		update tbl_board set readcnt=readcnt + 1 where idx = #{idx}
+	</update>	
+	<!-- idx 해당 글 검색 -->
+	<select id="boardSearch" resultType="com.jslhrd.exboard.domain.BoardDTO">
+		select * from tbl_board where idx = #{idx}	
+	</select>
+	<!-- 수정 -->
+	<update id="boardModify">
+		update tbl_board set email=#{email}, subject=#{subject}, contents=#{contents}  where idx = #{idx} and pass = #{pass}
+	</update>
+	<!-- 삭제 -->
+	<delete id="boardDelete">
+		delete from tbl_board where idx = #{idx} and pass = #{pass} 
+	</delete>	
+</mapper>

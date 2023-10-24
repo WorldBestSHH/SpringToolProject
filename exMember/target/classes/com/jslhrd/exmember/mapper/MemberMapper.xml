@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jslhrd.exmember.mapper.MemberMapper">
+	<!-- 전체 목록 -->
+	<select id="memberList" resultType="com.jslhrd.exmember.domain.MemberDTO">
+		select * from tbl_member order by first_time
+	</select>
+	<!-- 회원가입 -->
+	<insert id="memberInsert">
+		insert into tbl_member(name, userid, passwd, gubun, zip, addr1, addr2, tel, email, favorite, job, intro) 
+			values(#{name}, #{userid}, #{passwd}, #{gubun}, #{zip}, #{addr1}, #{addr2},#{tel}, #{email}, #{favorite}, #{job}, #{intro})
+	</insert>
+	<!-- 회원정보 -->
+	<select id="memberSelect" resultType="com.jslhrd.exmember.domain.MemberDTO">
+		select * from tbl_member where userid = #{userid}
+	</select>
+	<!-- 회원수정 -->
+	<update id="memberModify">
+		update tbl_member set gubun=#{gubun}, zip=#{zip}, addr1=#{addr1}, addr2=#{addr2}, tel=#{tel}, email=#{email}, favorite=#{favorite}, job=#{job}, intro=#{intro}
+			where userid = #{userid} and passwd = #{passwd}
+	</update>
+</mapper>

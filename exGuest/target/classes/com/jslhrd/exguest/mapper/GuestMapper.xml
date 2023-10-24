@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.jslhrd.exguest.mapper.GuestMapper">
+	<!-- id는 클래스 이름.기본데이터 타입은 resultType 안해도 됨(String은 클래스). DTO는 클래스 이름만 -->
+	<select id="guestCount">
+		select count(*) from tbl_guest
+	</select>
+	<select id="guestList" resultType="com.jslhrd.exguest.domain.GuestDTO">
+		select * from tbl_guest order by idx desc
+	</select>
+	<!-- 등록 -->
+	<insert id="guestWrite">
+		insert into tbl_guest(idx, name, subject, contents) values(tbl_guest_seq_idx.nextval, #{name}, #{subject}, #{contents})
+	</insert>
+	<!-- idx에 해당하는 글 검색 -->
+	<select id="guestSearch" resultType="com.jslhrd.exguest.domain.GuestDTO">
+		select * from tbl_guest where idx = #{idx}
+	</select>
+	<!-- 수정 -->
+	<update id="guestModify">
+		update tbl_guest set subject=#{subject}, contents=#{contents} where idx = #{idx}	
+	</update>
+	<!-- 삭제 -->
+	<delete id="guestDelete">
+		delete from tbl_guest where idx = #{idx} 
+	</delete>
+</mapper>

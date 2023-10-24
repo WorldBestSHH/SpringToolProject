@@ -23,6 +23,11 @@ public class BoardServiceImpl implements BoardService{
 		return mapper.boardCount();
 	}
 	
+	@Override
+	public int boardCountSearch(PageDTO dto) {
+		return mapper.boardCountSearch(dto);
+	}
+	
 /*	@Override
 	public List<BoardDTO> boardList(){
 		return mapper.boardList();
@@ -31,6 +36,11 @@ public class BoardServiceImpl implements BoardService{
 	@Override
 	public List<BoardDTO> boardList(PageDTO dto){
 		return mapper.boardList(dto);
+	}
+	
+	@Override
+	public List<BoardDTO> boardListSearch(PageDTO dto){
+		return mapper.boardListSearch(dto);
 	}
 	
 	@Override

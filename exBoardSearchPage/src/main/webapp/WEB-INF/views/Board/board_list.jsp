@@ -11,7 +11,16 @@ a.list {
 	font-size: 10pt;
 }
 </style>
-
+<script>
+	function search(){
+		if(bsearch.key.value==""){
+			alert("검색어를 입력해주세요");
+			bsearch.key.focus();
+			return;
+		}
+		bsearch.submit();
+	}
+</script>
 </head>
 <body bgcolor="#FFFFFF" topmargin="0" leftmargin="0">
 	<table border="0" width="800">
@@ -71,17 +80,18 @@ a.list {
 								<td width="25%">&nbsp;</td>
 								<td width="50%" align="center">
 									<table>
-										<form>
+										<form name="bsearch" method="post" action="board_list">
+											<input type="hidden" name="page" value="${page}">
 											<!-- 검색어를 이용하여 글제목, 작성자, 글내용 중에 하나를 입력 받아 처리하기 위한 부분 -->
 											<tr>
 												<td><select name="search">
-														<option value="subject">글제목</option>
-														<option value="name">작성자</option>
-														<option value="contents">글내용</option>
+														<option value="subject" <c:if test="${pageDTO.search=='subject'}">selected</c:if>>글제목</option>
+														<option value="name" <c:if test="${pageDTO.search=='name'}">selected</c:if>>작성자</option>
+														<option value="contents" <c:if test="${pageDTO.search=='contents'}">selected</c:if>>글내용</option>
 												</select></td>
-												<td><input type="text" size=20 name="key"></td>
+												<td><input type="text" size=20 name="key" value="${pageDTO.key}"></td>
 												<td>
-													<a href="#"><img src="/img/search2.gif" border="0"></a>
+													<a href="javascript:search()"><img src="/img/search2.gif" border="0"></a>
 												</td>
 											</tr>
 										</form>

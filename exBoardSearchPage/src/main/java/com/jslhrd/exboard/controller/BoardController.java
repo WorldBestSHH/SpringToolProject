@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -35,7 +36,7 @@ public class BoardController {
 		model.addAttribute("count", cnt);
 		model.addAttribute("list", service.boardList());
 	}
-*/	
+	
 	//PageIndex(o), Search(x)
 	@GetMapping("board_list")
 	public void boardList(@RequestParam("page") int page, PageDTO dto, Model model) {
@@ -78,6 +79,106 @@ public class BoardController {
 		model.addAttribute("list", service.boardList(dto));
 		model.addAttribute("pageList", PageIndex.pageList(nowpage, totpage, url, ""));
 	}
+	
+	//PageIndex(o), Search(o)
+	@PostMapping("board_list")
+	public void boardListPost(@RequestParam("page") int page, PageDTO dto, Model model) {
+		String url = "board_list";
+		
+		int nowpage = 1;
+		int maxlist = 10;
+		int totpage = 1;
+		
+		//총 게시글 수
+		int totcount = service.boardCountSearch(dto);
+		
+		//총 페이지 수 계산
+		if(totcount % 10 == 0)
+			totpage = totcount / maxlist;
+		else
+			totpage = totcount / maxlist + 1;
+		
+		if(totpage == 0) 
+			totpage = 1;
+		
+		if(page != 0) 
+			nowpage = page;
+		
+		//현재 페이지 시작번호 구하기
+		int startpage = (nowpage-1) * maxlist + 1;
+		int endpage = nowpage * maxlist;
+		
+		//dto는 자동전송
+		dto.setStartpage(startpage);
+		dto.setEndpage(endpage);
+		
+		//게시글번호
+		int listcount = totcount - ((nowpage - 1) * maxlist); 
+		
+		model.addAttribute("page", nowpage);
+		model.addAttribute("totpage", totpage);
+		model.addAttribute("totcount", totcount);
+		model.addAttribute("listcount", listcount);
+		model.addAttribute("list", service.boardListSearch(dto));
+		model.addAttribute("pageList", PageIndex.pageListHan(nowpage, totpage, url, dto.getSearch(), dto.getKey()));
+	}	
+*/	
+	
+	//PageIndex(o), Search(o)
+	//Get & Post
+	@RequestMapping(value="board_list", method= {RequestMethod.GET, RequestMethod.POST})
+	public void boardListGetPost(@RequestParam("page") int page, PageDTO dto, Model model) {
+		String url = "board_list";
+		
+		int nowpage = 1;
+		int maxlist = 10;
+		int totpage = 1;
+		
+		//총 게시글 수
+		int totcount = 0;
+		if(dto.getKey() != null)
+			totcount = service.boardCountSearch(dto);
+		else
+			totcount = service.boardCount();	
+		
+		//총 페이지 수 계산
+		if(totcount % 10 == 0)
+			totpage = totcount / maxlist;
+		else
+			totpage = totcount / maxlist + 1;
+		
+		if(totpage == 0) 
+			totpage = 1;
+		
+		if(page != 0) 
+			nowpage = page;
+		
+		//현재 페이지 시작번호 구하기
+		int startpage = (nowpage-1) * maxlist + 1;
+		int endpage = nowpage * maxlist;
+		
+		//dto는 자동전송
+		dto.setStartpage(startpage);
+		dto.setEndpage(endpage);
+		
+		//게시글번호
+		int listcount = totcount - ((nowpage - 1) * maxlist); 
+		
+		model.addAttribute("page", nowpage);
+		model.addAttribute("totpage", totpage);
+		model.addAttribute("totcount", totcount);
+		model.addAttribute("listcount", listcount);
+		
+		if(dto.getKey() != null)
+			model.addAttribute("list", service.boardListSearch(dto));
+		else
+			model.addAttribute("list", service.boardList(dto));
+		
+		if(dto.getKey() != null)
+			model.addAttribute("pageList", PageIndex.pageListHan(nowpage, totpage, url, dto.getSearch(), dto.getKey()));
+		else
+			model.addAttribute("pageList", PageIndex.pageList(nowpage, totpage, url, ""));
+	}	
 	
 	@GetMapping("board_write")
 	public void boardWrite(@RequestParam("page") int page, Model model) {

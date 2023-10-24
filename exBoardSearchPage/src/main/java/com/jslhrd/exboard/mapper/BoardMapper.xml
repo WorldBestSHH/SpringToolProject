@@ -5,6 +5,21 @@
 	<select id="boardCount">
 		select count(*) from tbl_board
 	</select>
+	<!-- 검색 게시글 카운트 -->
+	<select id="boardCountSearch">
+		select count(*) from tbl_board where
+			<choose>
+				<when test="search=='name'">
+					name like '%' || #{key} || '%'
+				</when>
+				<when test="search=='subject'">
+					subject like '%' || #{key} || '%'
+				</when>
+				<when test="search=='contents'">
+					contents like '%' || #{key} || '%'
+				</when>	
+			</choose>
+	</select>	
 	
 	<!-- 전체 게시글(페이지x, 검색x) 
 	<select id="boardList" resultType="com.jslhrd.exboard.domain.BoardDTO">
@@ -20,6 +35,43 @@
 								where X.rnum >= #{startpage}
 		]]>
 	</select>
+	<!-- 전체 게시글(페이지o, 검색o)  -->
+	<select id="boardListSearch" resultType="com.jslhrd.exboard.domain.BoardDTO">
+		select X.* from (select rownum as rnum, A.* from 
+			(select * from tbl_board order by idx desc) A where
+				<choose>
+					<when test="search=='name'">
+						name like '%' || #{key} || '%'
+					</when>
+					<when test="search=='subject'">
+						subject like '%' || #{key} || '%'
+					</when>
+					<when test="search=='contents'">
+						contents like '%' || #{key} || '%'
+					</when>
+				</choose>
+				<trim prefix="AND">
+					<![CDATA[
+						rownum <= #{endpage}) X where
+					]]>		
+				</trim>	
+				<choose>
+					<when test="search=='name'">
+						name like '%' || #{key} || '%'
+					</when>
+					<when test="search=='subject'">
+						subject like '%' || #{key} || '%'
+					</when>
+					<when test="search=='contents'">
+						contents like '%' || #{key} || '%'
+					</when>
+				</choose>
+				<trim prefix="AND">
+					<![CDATA[
+						X.rnum >= #{startpage}
+					]]>		
+				</trim>				
+	</select>	
 	<!-- 게시글 등록 -->
 	<insert id="boardWrite">
 		insert into tbl_board(idx, name, subject, contents, pass) values(tbl_board_seq_idx.nextval, #{name}, #{subject}, #{contents}, #{pass})

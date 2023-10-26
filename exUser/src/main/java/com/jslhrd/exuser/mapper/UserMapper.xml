@@ -5,10 +5,29 @@
 	<select id="userIDCheck" resultType="int">
 		select count(*) from tbl_user where userid=#{userid}
 	</select>
-
 	<!-- 회원가입처리 -->
 	<insert id="userInsert">
 		insert into tbl_user(name, userid, passwd, tel, email)
 				values(#{name},#{userid},#{passwd},#{tel},#{email}) 
 	</insert>
+	<!-- 로그인 시 아이디를 이용한 비번 검색 -->
+	<select id="userIDPassSearch" resultType="string">
+		select passwd from tbl_user where userid=#{userid}
+	</select>	
+	<!-- 로그인(ID, Pass) 성공시 사용자 정보 반환 -->
+	<select id="userLogin" resultType="com.jslhrd.exuser.domain.UserDTO">
+		select * from tbl_user where userid=#{userid}
+	</select>
+	<!-- 로그인 성공시 최근 접속일자 업데이트 -->
+	<select id="userLoginUpdate" resultType="com.jslhrd.exuser.domain.UserDTO">
+		update tbl_user set last_time=sysdate where userid=#{userid}	
+	</select>
+	<!-- 회원목록 -->
+	<select id="userList" resultType="com.jslhrd.exuser.domain.UserDTO">
+		select * from tbl_user order by first_time
+	</select>
+	<!-- 회원수정 -->
+	<update id="userModify">
+		update tbl_user set passwd=#{passwd}, tel=#{tel}, email=#{email} where userid=#{userid}
+	</update>
 </mapper>
